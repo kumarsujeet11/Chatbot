@@ -29,6 +29,7 @@ def bag_of_words(sentence):
                 bag[i]=1
     return np.array(bag)
 
+
 def predict_class(sentence):
     bow=bag_of_words(sentence)
     res=model.predict(np.array([bow]))[0]
@@ -38,20 +39,29 @@ def predict_class(sentence):
     results.sort(key=lambda x: x[1],reverse=True)
     return_list=[]
     for r in results:
-        return_list.append({'intent':tags[r[0]],'probability':str(r[1])})
+        return_list.append({'label':tags[r[0]],'probability':str(r[1])})
     return return_list
 
-def get_response(intents_list,intents_json):
-    tag=intents_list[0]['intent']
-    list_of_intents=intents_json['intents']
-    for i in list_of_intents:
-        if i['tag']==tag:
-            result=random.choice(i['responses'])
+
+def get_response(output_result):
+    check_tag = output_result[0]['label']
+    for int_new in intents['intents']:
+        if int_new['tag']==check_tag:
+            result = random.choice(int_new['responses'])
             break
     return result
+
+# def get_response(intents_list,intents_json):
+#     tag=intents_list[0]['intent']
+#     list_of_intents=intents_json['intents']
+#     for i in list_of_intents:
+#         if i['tag']==tag:
+#             result=random.choice(i['responses'])
+#             break
+#     return result
 
 while True:
     message=input("")
     ints=predict_class(message)
-    res=get_response(ints,intents)
+    res=get_response(ints)
     print(res)
